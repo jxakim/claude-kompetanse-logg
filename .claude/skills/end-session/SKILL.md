@@ -1,7 +1,7 @@
 ---
 name: end-session
 description: Ends a lærling workday session. Writes the day's dagslogg with kompetansemål, learnings and links into the log repository, then commits it. Use when the user types /end-session, or says avslutt dagen, oppsummer dagen, dagslogg, or hva har jeg lært i dag.
-allowed-tools: Bash(git add *) Bash(git commit *) Bash(git status *) Bash(git diff *)
+allowed-tools: Bash(git -C * add *) Bash(git -C * commit *) Bash(git -C * status *) Bash(git -C * diff *)
 ---
 
 # End session
@@ -9,7 +9,18 @@ allowed-tools: Bash(git add *) Bash(git commit *) Bash(git status *) Bash(git di
 Closes the workday, writes the log, commits it. Never invoke this on your own — it writes to a repository, so the user decides when the day is over.
 
 **Log repository:** `~/laerling-logg` — adjust if it lives elsewhere.
-**Log path:** `<repo>/logg/dagslogg-YYYY-MM-DD.md`
+**Log path:** `~/laerling-logg/logg/dagslogg-YYYY-MM-DD.md`
+
+## The working directory is not the log repo
+
+The user starts Claude Code in whatever project they worked in that day. The log belongs somewhere else entirely.
+
+- Write the log to its **absolute path**. Never a path relative to the current project.
+- Run every git command with **`-C ~/laerling-logg`**, so it operates on the log repo no matter where the session started. A bare `git add` here either fails because the file is outside the repo, or — worse — stages something in the user's work repository.
+- Before committing, confirm the target: `git -C ~/laerling-logg status --short` should show only the new log file.
+- If a git command reports a different repository than the log repo, stop and tell the user rather than trying another form of the command.
+
+A dagslogg accidentally committed into a Vestfold work repository means internal learning notes in a shared team history. Absolute paths and `-C` are what prevent that.
 
 ## Steps
 
@@ -73,17 +84,17 @@ Print the log in the conversation. Ask them to confirm or correct it. It's their
 After they confirm:
 
 ```
-git add logg/dagslogg-YYYY-MM-DD.md
-git commit -m "dagslogg: YYYY-MM-DD"
+git -C ~/laerling-logg add logg/dagslogg-YYYY-MM-DD.md
+git -C ~/laerling-logg commit -m "dagslogg: YYYY-MM-DD"
 ```
 
 Then **ask before pushing.** Don't push automatically. A local commit is easy to amend; a pushed one is on a remote where fixing it means rewriting published history. One confirmation buys a lot of margin on a file that carries confidentiality risk.
 
-If `git status` shows unrelated staged changes, commit only the log file by path and say what was left alone. Never `git add .` here.
+If `git -C ~/laerling-logg status` shows unrelated staged changes, commit only the log file by path and say what was left alone. Never `git add .` here — and never `git add` without `-C`.
 
 ## Don't
 
 - Invoke this yourself. Only the user ends the day.
 - Reconstruct a plausible workday from thin material. If little was tracked, write the short honest log.
-- `git add .`, `git commit -a`, or push without asking.
+- `git add .`, `git commit -a`, git without `-C`, or push without asking.
 - Skip the confidentiality check because the day felt routine. Routine days are when internal hostnames slip in.

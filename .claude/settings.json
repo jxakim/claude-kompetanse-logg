@@ -1,0 +1,7 @@
+{
+  "autoUpdatesChannel": "latest",
+  "theme": "dark",
+  "permissions": {
+    "additionalDirectories": ["HER LEGGES LOKAL REPO-PATH"]
+  }
+}
