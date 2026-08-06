@@ -1,10 +1,7 @@
-# laerling-logg
+# lærling-logg
 
 Læringslogg for lærling i IT-utvikling, Vestfold fylkeskommune.
-Inneholder både dagsloggene og skillene som skriver dem.
-
-> **Dette repoet skal være privat.** Loggene beskriver arbeid i en offentlig
-> virksomhet. Avklar med veileder eller faglig leder før du tar det i bruk.
+Inneholder både dagsloggene og skillene som skriver dem. 
 
 ## Struktur
 
