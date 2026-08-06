@@ -1,0 +1,13 @@
+# Aldri versjonér hemmeligheter eller lokale miljøfiler
+.env
+.env.*
+*.key
+*.pem
+*.pfx
+secrets.*
+credentials.*
+
+# OS-støy
+.DS_Store
+Thumbs.db
+desktop.ini
